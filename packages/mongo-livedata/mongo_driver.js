@@ -148,6 +148,13 @@ MongoConnection = function (url, options) {
     if (err)
       throw err;
     self.db = db;
+//     self.db.serverConfig.on('joined', function (kind, doc) {
+// //      if (kind === 'primary')
+//         console.log("FAIL OVER " + kind + "::" + doc.me)
+//     });
+//     self.db.serverConfig.on('reconnect', function () {
+//       console.log("RECONNECT");
+//     });
 
     Fiber(function () {
       // drain queue of pending callbacks
