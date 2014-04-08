@@ -280,7 +280,7 @@ var launchMongo = function (options) {
     // findMongoAndKillItDead) and we decided to stop in the middle (eg, because
     // we're in multiple mode and another process exited).
     if (stopped)
-      return null;
+      return;
     proc = child_process.spawn(mongod_path, [
       // nb: cli-test.sh and findMongoPids make strong assumptions about the
       // order of the arguments! Check them before changing any arguments.
@@ -692,6 +692,27 @@ _.extend(MongoRunner.prototype, {
     self.stop();
     self.onFailure && self.onFailure();
     self._allowStartupToReturn();
+  },
+
+  _mongoHosts: function () {
+    var self = this;
+    var ports = [self.port];
+    if (self.multiple) {
+      ports.push(self.port + 1, self.port + 2);
+    }
+    return _.map(ports, function (port) {
+      return "127.0.0.1:" + port;
+    }).join(",");
+  },
+
+  mongoUrl: function () {
+    var self = this;
+    return "mongodb://" + self._mongoHosts() + "/meteor";
+  },
+
+  oplogUrl: function () {
+    var self = this;
+    return "mongodb://" + self._mongoHosts() + "/local";
   }
 });
 
